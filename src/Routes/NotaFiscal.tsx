@@ -8,6 +8,7 @@ import Input_imposto from "../components/Input_imposto";
 import { BiTrash } from "react-icons/bi";
 import AnexarArquivo from "../components/AnexarArquivo";
 import Input_dados_nota from "../components/Input_dados_nota";
+import axios from "axios";
 
 function NotaFiscal() {
   useEffect(() => {
@@ -125,26 +126,26 @@ function NotaFiscal() {
     );
 
     try {
-      const response = await fetch(
-        "http://191.220.189.5:64548/CriarNotaFiscal",
-        {
-          method: "POST",
-          body: formData,
-        }
+      // Requisição POST com axios
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}CriarNotaFiscal`,
+        formData
       );
 
-      const result = await response.json();
-
-      if (response.ok) {
+      // Verifica se a requisição foi bem-sucedida
+      if (response.status === 201) {
         console.log(
-          `Solicitação #${result.notaFiscal.id} foi enviada com sucesso.`
+          `Solicitação #${response.data.notaFiscal.id} foi enviada com sucesso.`
         );
-        console.log(result);
-        alert(`Solicitação #${result.notaFiscal.id} foi enviada com sucesso.`);
-        navigate("/");
+        console.log(response.data);
+        alert(
+          `Solicitação #${response.data.notaFiscal.id} foi enviada com sucesso.`
+        );
+        navigate("/"); // Redireciona para a página principal
       }
     } catch (error) {
       console.error("Erro ao enviar nota fiscal:", error);
+      alert("Erro ao enviar nota fiscal");
     }
   };
 
